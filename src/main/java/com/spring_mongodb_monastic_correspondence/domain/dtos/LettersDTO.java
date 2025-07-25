@@ -8,6 +8,7 @@ public record LettersDTO(
         String receiver,
         String content,
         int approximateYear,
-        State currentState
+        State currentState,
+        int version
 ) {
 }

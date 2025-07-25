@@ -1,4 +1,9 @@
 package com.spring_mongodb_monastic_correspondence.domain.dtos;
 
-public record UpdateLetterDTO(String newState) {
+import org.apache.el.stream.Optional;
+
+public record UpdateLetterDTO(
+        String new_state,
+        String new_content
+) {
 }

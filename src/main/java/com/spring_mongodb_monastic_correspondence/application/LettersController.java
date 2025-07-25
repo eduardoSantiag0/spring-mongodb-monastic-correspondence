@@ -60,10 +60,17 @@ public class LettersController {
 
     @PatchMapping("/update/{id}")
     public ResponseEntity<Void> updateLetterState (@PathVariable String id, @RequestBody UpdateLetterDTO dto) {
-        State newStateEnum = State.valueOf(dto.newState());
-        lettersService.updateLetterState(id, newStateEnum);
+
+        if (dto.new_state() != null) {
+            State newStateEnum = State.valueOf(dto.new_state());
+            lettersService.updateLetterState(id, newStateEnum);
+        }
+
+        if (dto.new_content() != null) {
+            lettersService.updateContent(id, dto.new_content());
+        }
+
         return ResponseEntity.noContent().build();
     }
-    
 
 }

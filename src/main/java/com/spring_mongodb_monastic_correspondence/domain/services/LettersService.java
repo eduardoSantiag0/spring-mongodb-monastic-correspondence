@@ -6,13 +6,12 @@ import com.spring_mongodb_monastic_correspondence.domain.model.LettersEntity;
 import com.spring_mongodb_monastic_correspondence.domain.model.State;
 import com.spring_mongodb_monastic_correspondence.domain.dtos.LettersDTO;
 import com.spring_mongodb_monastic_correspondence.infra.LettersMapper;
-import com.spring_mongodb_monastic_correspondence.infra.LettersRepository;
+import com.spring_mongodb_monastic_correspondence.infra.repositories.LettersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class LettersService {
@@ -21,7 +20,29 @@ public class LettersService {
     private LettersRepository lettersRepository;
 
     @Autowired
+    private VersionServices versionServices;
+
+    @Autowired
     private LettersMapper mapper;
+
+
+    private String simulateDeprecation(String data) {
+        return data
+                .replace("a", "@")
+                .replace("e", "&")
+                .replace("i", "#")
+                .replace("o", "=")
+                .replace("u", "%");
+    }
+
+    private String simulateFixingContent (String data) {
+        return data
+                .replace("@", "a")
+                .replace("&", "e")
+                .replace("#", "i")
+                .replace("=", "o")
+                .replace("%", "u");
+    }
 
 
     public LettersDTO insertLetter(LettersDTO dto) {
@@ -32,7 +53,7 @@ public class LettersService {
             content = simulateDeprecation(content);
         }
 
-        LettersEntity entity = new LettersEntity(dto.sender(), dto.receiver(), content, dto.approximateYear(), dto.currentState());
+        LettersEntity entity = new LettersEntity(dto.sender(), dto.receiver(), content, dto.approximateYear(), dto.currentState(), 0);
 
         lettersRepository.save(entity);
         return mapper.toDTO(entity);
@@ -43,6 +64,7 @@ public class LettersService {
     public boolean deleteLetterById(String id) {
         if (!lettersRepository.existsById(id)) return false;
         lettersRepository.deleteById(id);
+        //todo Update Deleted
         return true;
     }
 
@@ -78,31 +100,19 @@ public class LettersService {
 
 
     public List<LettersDTO> getLettersFiltered(String name, Integer date, String keyword, String state) {
-        if (name !=  null) return this.getLettersByName(name);
-        if (date != null ) return this.getLettersByDate(date);
-        if (keyword != null) return  this.getByKeyword(keyword);
-        if (state != null) return this.getLettersByState(state);
-        return List.of();
+        Set<LettersDTO> dtos = new HashSet<>();
+
+        if (name != null) dtos.addAll(getLettersByName(name));
+
+        if (date != null) dtos.addAll(getLettersByDate(date));
+
+        if (keyword != null) dtos.addAll(getByKeyword(keyword));
+
+        if (state != null) dtos.addAll(getLettersByState(state));
+
+        return new ArrayList<>(dtos);
     }
 
-
-    private String simulateDeprecation(String data) {
-        return data
-                .replace("a", "@")
-                .replace("e", "&")
-                .replace("i", "#")
-                .replace("o", "=")
-                .replace("u", "%");
-    }
-
-    private String simulateFixingContent (String data) {
-        return data
-                .replace("@", "a")
-                .replace("&", "e")
-                .replace("#", "i")
-                .replace("=", "o")
-                .replace("%", "u");
-    }
 
     public String fixLetter(String id) {
         Optional<LettersEntity> optional = lettersRepository.findById(id);
@@ -119,6 +129,7 @@ public class LettersService {
 
         entity.setContent(simulateFixingContent(contentToFix));
         entity.setCurrentState(State.READABLE);
+        entity.incVersion();
         lettersRepository.save(entity);
 
         return entity.getContent();
@@ -126,13 +137,27 @@ public class LettersService {
     }
 
     public void updateLetterState(String id, State newState) {
-        Optional<LettersEntity> optional = lettersRepository.findById(id);
 
-        if (optional.isEmpty()) throw new LetterNotFoundException(id);
-
-        LettersEntity entity = optional.get();
+        LettersEntity entity = lettersRepository.findById(id)
+                .orElseThrow(() -> new LetterNotFoundException(id));
 
         entity.setCurrentState(newState);
+        entity.incVersion();
+
+        lettersRepository.save(entity);
+
+    }
+
+
+    public void updateContent(String id, String newContent) {
+        LettersEntity entity = lettersRepository.findById(id)
+                .orElseThrow(() -> new LetterNotFoundException(id));
+
+
+        versionServices.saveOldVersion(entity);
+
+        entity.setContent(newContent);
+        entity.incVersion();
 
         lettersRepository.save(entity);
 
