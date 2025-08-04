@@ -1,0 +1,29 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern> [%d{yyyy-MM-dd HH:mm:ss}]  %-5level - %msg%n </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>./logs/monastic_activities.log</file>
+        <append>false</append>
+        <encoder>
+<!--            <pattern> [%d{yyyy-MM-dd HH:mm:ss}]  %-5level - %msg%n </pattern>-->
+            <pattern> [%d{yyyy-MM-dd}]  - %msg%n </pattern>
+        </encoder>
+    </appender>
+
+
+    <logger name="com.spring_mongodb_monastic_correspondence"
+            level="info" additivity="false">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</configuration>

@@ -1,8 +1,11 @@
 package com.spring_mongodb_monastic_correspondence.application;
 
 
+import com.spring_mongodb_monastic_correspondence.domain.dtos.LetterVersionsDTO;
 import com.spring_mongodb_monastic_correspondence.domain.model.LetterVersion;
 import com.spring_mongodb_monastic_correspondence.domain.services.VersionServices;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,16 +22,13 @@ public class LettersVersionsController {
     @Autowired
     private VersionServices versionService;
 
-    // Listar todas as versões com filtros opcionais
 
-    // getByOriginalId > listar todas as versões de uma carta
      @GetMapping("/of/{originalId}")
-    public ResponseEntity<List<LetterVersion>> getVersionsOfLetter(@PathVariable String originalId) {
-         List<LetterVersion> versions = versionService.getVersionsOfLetter(originalId);
+     @Operation(summary = "Versions of the same letter", description = "Returns a list of changes in the same letter.")
+     @ApiResponse(responseCode = "200", description = "List of letters returned")
+    public ResponseEntity<List<LetterVersionsDTO>> getVersionsOfLetter(@PathVariable String originalId) {
+         List<LetterVersionsDTO> versions = versionService.getVersionsOfLetter(originalId);
          return ResponseEntity.ok(versions);
      }
-
-     //todo Está retornando vetor vazio
-    // todo Está fazendo update mas não está jogando no repositorio correto
 
 }

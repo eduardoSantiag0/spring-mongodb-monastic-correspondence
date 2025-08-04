@@ -2,11 +2,12 @@ package com.spring_mongodb_monastic_correspondence.domain.services;
 
 import com.spring_mongodb_monastic_correspondence.application.exceptions.InvalidStateExeption;
 import com.spring_mongodb_monastic_correspondence.application.exceptions.LetterNotFoundException;
+import com.spring_mongodb_monastic_correspondence.domain.dtos.LettersDTO;
 import com.spring_mongodb_monastic_correspondence.domain.model.LettersEntity;
 import com.spring_mongodb_monastic_correspondence.domain.model.State;
-import com.spring_mongodb_monastic_correspondence.domain.dtos.LettersDTO;
 import com.spring_mongodb_monastic_correspondence.infra.LettersMapper;
 import com.spring_mongodb_monastic_correspondence.infra.repositories.LettersRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
+@Slf4j
 public class LettersService {
 
     @Autowired
@@ -56,6 +58,11 @@ public class LettersService {
         LettersEntity entity = new LettersEntity(dto.sender(), dto.receiver(), content, dto.approximateYear(), dto.currentState(), 0);
 
         lettersRepository.save(entity);
+
+//        log.info("ACTION=CREATE ID={} AUTHOR={}", entity.getId(), entity.getSender());
+        log.info("No ano {}, o irmão {} mandou uma carta para o irmão {}. A carta foi encontrada no estado {}",
+                entity.getApproximateYear(), entity.getSender(), entity.getReceiver(), entity.getCurrentState());
+
         return mapper.toDTO(entity);
     }
 
@@ -64,8 +71,60 @@ public class LettersService {
     public boolean deleteLetterById(String id) {
         if (!lettersRepository.existsById(id)) return false;
         lettersRepository.deleteById(id);
-        //todo Update Deleted
+        log.warn("ACTION=DELETE ID={} - LOSS OF A RECORD", id);
         return true;
+    }
+
+    public void updateLetterState(String id, State newState) {
+
+        LettersEntity entity = lettersRepository.findById(id)
+                .orElseThrow(() -> new LetterNotFoundException(id));
+
+        entity.setCurrentState(newState);
+        entity.incVersion();
+
+        log.info("ACTION=EDIT ID={} VERSION={} CHANGES=STATE", entity.getId(), entity.getVersion()-1);
+
+        lettersRepository.save(entity);
+
+    }
+
+
+    public void updateContent(String id, String newContent) {
+        Optional<LettersEntity> optional = lettersRepository.findById(id);
+
+        if (optional.isEmpty()) {
+            throw new LetterNotFoundException(id);
+        }
+
+        LettersEntity entity = optional.get();
+
+        versionServices.saveOldVersion(entity);
+
+        entity.setContent(newContent);
+        entity.incVersion();
+
+        log.info("ACTION=EDIT ID={} VERSION={} CHANGES=CONTENT", entity.getId(), entity.getVersion()-1);
+
+
+        lettersRepository.save(entity);
+
+    }
+
+
+    public LettersDTO getLetterById(String id) {
+
+        Optional<LettersEntity> optional = lettersRepository.findById(id);
+
+        if (optional.isEmpty()) {
+            log.error("ACTION=READ FAILED ID={} - Letter not found", id);
+            throw new LetterNotFoundException(id);
+        }
+
+        LettersEntity entity = optional.get();
+        log.info("ACTION=READ ID={}", id);
+
+        return mapper.toDTO(entity);
     }
 
 
@@ -136,41 +195,7 @@ public class LettersService {
 
     }
 
-    public void updateLetterState(String id, State newState) {
-
-        LettersEntity entity = lettersRepository.findById(id)
-                .orElseThrow(() -> new LetterNotFoundException(id));
-
-        entity.setCurrentState(newState);
-        entity.incVersion();
-
-        lettersRepository.save(entity);
-
-    }
 
 
-    public void updateContent(String id, String newContent) {
-        LettersEntity entity = lettersRepository.findById(id)
-                .orElseThrow(() -> new LetterNotFoundException(id));
-
-
-        versionServices.saveOldVersion(entity);
-
-        entity.setContent(newContent);
-        entity.incVersion();
-
-        lettersRepository.save(entity);
-
-    }
-
-    public LettersDTO getLetterById(String id) {
-        Optional<LettersEntity> optional = lettersRepository.findById(id);
-
-        if (optional.isEmpty()) throw new LetterNotFoundException(id);
-
-        LettersEntity entity = optional.get();
-
-        return mapper.toDTO(entity);
-    }
 
 }

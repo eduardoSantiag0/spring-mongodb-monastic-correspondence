@@ -3,8 +3,9 @@ package com.spring_mongodb_monastic_correspondence.domain.dtos;
 import com.spring_mongodb_monastic_correspondence.domain.model.State;
 import jakarta.validation.constraints.NotBlank;
 
-public record LettersDTO(
+public record LetterVersionsDTO(
         String id,
+        String originalId,
         @NotBlank String sender,
         @NotBlank String receiver,
         @NotBlank String content,
