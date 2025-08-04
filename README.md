@@ -1,10 +1,15 @@
-# 📜 "Letters from the Leibowitz Scriptorium" Challenge
+The aim of this project is to study Logging and CRUD operations with Mongo DB.
 
-## 🕰️ Narrative Context
+# 📜 Monastic Correspondence
+
+## 🕰️ Context
 
 After the collapse of civilization, monks from the Order of Saint Leibowitz dedicate themselves to preserving relics and records of the old world. They write and exchange **letters** between abbots, scribes, and explorers who scour the ruins of the past.
 
+
 This project implements a system to **register, store, and query these letters** circulating among the monks — while logging every action for audit and historical legacy purposes.
+
+The ideia for the project came by my reading of _A Canticle for Leibowitz_ 
 
 ---
 
