@@ -1,14 +1,17 @@
 package com.spring_mongodb_monastic_correspondence.application;
 
+import com.spring_mongodb_monastic_correspondence.domain.dtos.CreateLetterDTO;
 import com.spring_mongodb_monastic_correspondence.domain.dtos.UpdateLetterDTO;
 import com.spring_mongodb_monastic_correspondence.domain.model.State;
 import com.spring_mongodb_monastic_correspondence.domain.services.LettersService;
 import com.spring_mongodb_monastic_correspondence.domain.dtos.LettersDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,18 +32,27 @@ public class LettersController {
             @ApiResponse(responseCode = "201", description = "Letter created"),
             @ApiResponse(responseCode = "400", description = "Incomplete or invalid data")
     })
-    public ResponseEntity<?> saveLetters(@Valid @RequestBody LettersDTO dto) {
-        return ResponseEntity.ok(lettersService.insertLetter(dto));
+    public ResponseEntity<?> saveLetters(@Valid @RequestBody CreateLetterDTO dto) {
+        LettersDTO created = lettersService.insertLetter(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping()
     @Operation(summary = "Filter letters", description = "Returns a list of letters based on optional filters.")
     @ApiResponse(responseCode = "200", description = "List of letters returned")
     public ResponseEntity<List<LettersDTO>> getLetters(
+            @Parameter(description = "Name of sender or receiver (partial or full match)", example = "Father James")
             @RequestParam(required = false) String name,
+
+            @Parameter(description = "Approximate year of the letter", example = "1860")
             @RequestParam(required = false) Integer date,
+
+            @Parameter(description = "Keyword contained in the letter content", example = "Wi-Fi")
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String state ) {
+
+            @Parameter(description = "Current state of the letter", example = "READABLE")
+            @RequestParam(required = false) String state
+    ) {
         return ResponseEntity.ok(lettersService.getLettersFiltered(name, date, keyword, state));
     }
 
@@ -85,7 +97,7 @@ public class LettersController {
     }
 
     @PatchMapping("/update/{id}")
-    @Operation(summary = "Update letter state/content", description = "Updates the state and/or content of a letter.")
+    @Operation(summary = "Update letter state and/or content", description = "Updates the state and/or content of a letter. The user must provide at least one of the fields: `new_state` or `new_content`.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Letter updated successfully"),
             @ApiResponse(responseCode = "404", description = "Letter not found")

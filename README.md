@@ -68,6 +68,13 @@ The ideia for the project came by my reading of _A Canticle for Leibowitz_
 
 ---
 
+
+### 📝 Logging
+All significant actions like creation, update, deletion, reading, and fixing are logged using SLF4J + Logback with contextual details (letter IDs, version numbers, authors, states).
+
+
+---
+
 ## 📦 Build and Run
 
 ### Prerequisites
@@ -99,5 +106,3 @@ Swagger UI is available at:
 ```
 
 
-### 📝 Logging
-All significant actions like creation, update, deletion, reading, and fixing are logged using SLF4J + Logback with contextual details (letter IDs, version numbers, authors, states).

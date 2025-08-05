@@ -2,6 +2,7 @@ package com.spring_mongodb_monastic_correspondence.domain.services;
 
 import com.spring_mongodb_monastic_correspondence.application.exceptions.InvalidStateExeption;
 import com.spring_mongodb_monastic_correspondence.application.exceptions.LetterNotFoundException;
+import com.spring_mongodb_monastic_correspondence.domain.dtos.CreateLetterDTO;
 import com.spring_mongodb_monastic_correspondence.domain.dtos.LettersDTO;
 import com.spring_mongodb_monastic_correspondence.domain.model.LettersEntity;
 import com.spring_mongodb_monastic_correspondence.domain.model.State;
@@ -47,7 +48,7 @@ public class LettersService {
     }
 
 
-    public LettersDTO insertLetter(LettersDTO dto) {
+    public LettersDTO insertLetter(CreateLetterDTO dto) {
 
         String content = dto.content();
 
