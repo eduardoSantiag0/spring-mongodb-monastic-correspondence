@@ -1,8 +1,12 @@
 package com.spring_mongodb_monastic_correspondence.domain.services;
 
-import com.spring_mongodb_monastic_correspondence.domain.dtos.CreateLetterDTO;
-import com.spring_mongodb_monastic_correspondence.domain.dtos.LettersDTO;
-import com.spring_mongodb_monastic_correspondence.domain.model.LettersEntity;
+import com.spring_mongodb_monastic_correspondence.application.services.CommentService;
+import com.spring_mongodb_monastic_correspondence.application.services.LettersService;
+import com.spring_mongodb_monastic_correspondence.application.services.VersionService;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.CreateLetterDTO;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.LetterWithCommentsDTO;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.LettersDTO;
+import com.spring_mongodb_monastic_correspondence.infra.entities.LettersEntity;
 import com.spring_mongodb_monastic_correspondence.infra.LettersMapper;
 import com.spring_mongodb_monastic_correspondence.infra.repositories.LettersRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +36,10 @@ class LettersServiceTest {
     LettersService lettersService;
 
     @Mock
-    VersionServices versionServices;
+    VersionService versionService;
+
+    @Mock
+    CommentService commentService;
 
     @Mock
     LettersMapper lettersMapper;
@@ -60,6 +67,7 @@ class LettersServiceTest {
                 createdLetter.sender(), createdLetter.receiver(),
                 createdLetter.content(), createdLetter.approximateYear(),
                 createdLetter.currentState(),0);
+
     }
 
     @Test
@@ -94,14 +102,14 @@ class LettersServiceTest {
         //Arrange
         String newContent = "For testing";
         when(lettersRepository.findById("123")).thenReturn(Optional.ofNullable(this.lettersEntity));
-        doNothing().when(versionServices).saveOldVersion(any(LettersEntity.class));
+        doNothing().when(versionService).saveOldVersion(any(LettersEntity.class));
         when(lettersRepository.save(any(LettersEntity.class))).thenReturn(this.lettersEntity);
 
         //Act
         lettersService.updateContent("123", newContent);
 
         // Test
-        verify(versionServices).saveOldVersion(lettersEntity); // Garante que chamou esse método
+        verify(versionService).saveOldVersion(lettersEntity); // Garante que chamou esse método
 
         assertEquals(newContent, lettersEntity.getContent());
         assertEquals(1, lettersEntity.getVersion());
@@ -113,13 +121,17 @@ class LettersServiceTest {
 
         //Arrange
         when (lettersRepository.findById("123")).thenReturn(Optional.ofNullable(this.lettersEntity));
-        when(lettersMapper.toDTO(any(LettersEntity.class))).thenReturn(expectedDTO);
 
         //Act
+        LetterWithCommentsDTO expectedLetter = new LetterWithCommentsDTO(
+                createdLetter.sender(), createdLetter.receiver(),
+                createdLetter.content(), createdLetter.approximateYear(),
+                createdLetter.currentState(),0, List.of());
+
         var result = lettersService.getLetterById("123");
 
         //Assert
-        assertEquals(this.expectedDTO, result);
+        assertEquals(expectedLetter, result);
 
     }
 

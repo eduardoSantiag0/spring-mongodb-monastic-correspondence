@@ -1,8 +1,9 @@
 package com.spring_mongodb_monastic_correspondence.domain.services;
 
-import com.spring_mongodb_monastic_correspondence.domain.dtos.LetterVersionsDTO;
+import com.spring_mongodb_monastic_correspondence.application.services.VersionService;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.LetterVersionsDTO;
 import com.spring_mongodb_monastic_correspondence.domain.model.LetterVersion;
-import com.spring_mongodb_monastic_correspondence.domain.model.LettersEntity;
+import com.spring_mongodb_monastic_correspondence.infra.entities.LettersEntity;
 import com.spring_mongodb_monastic_correspondence.infra.repositories.LetterVersionsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ class VersionServicesTest {
     LetterVersionsRepository versionsRepository;
 
     @InjectMocks
-    VersionServices versionServices;
+    VersionService versionService;
 
     private LettersEntity entity1;
 
@@ -65,7 +66,7 @@ class VersionServicesTest {
         when(versionsRepository.findByOriginalId("789"))
                 .thenReturn(List.of(version1, version2));
         // Act
-        List<LetterVersionsDTO> result = versionServices.getVersionsOfLetter("789");
+        List<LetterVersionsDTO> result = versionService.getVersionsOfLetter("789");
 
         // Assert
         assertEquals(2, result.size());
@@ -81,7 +82,7 @@ class VersionServicesTest {
                 .thenReturn(List.of(version1, version2));
 
         // Act
-        List<LetterVersionsDTO> result = versionServices.getVersionsOfLetter("789");
+        List<LetterVersionsDTO> result = versionService.getVersionsOfLetter("789");
 
         // Assert
         assertEquals(2, result.size());
@@ -95,7 +96,7 @@ class VersionServicesTest {
                 .thenReturn(List.of(version1, version2));
 
         // Act
-        List<LetterVersionsDTO> result = versionServices.getVersionsOfLetter("789");
+        List<LetterVersionsDTO> result = versionService.getVersionsOfLetter("789");
 
         // Assert
         assertEquals(2, result.size());
@@ -110,7 +111,7 @@ class VersionServicesTest {
                 .thenReturn(Collections.emptyList());
 
         // Act
-        List<LetterVersionsDTO> result = versionServices.getVersionsOfLetter("999");
+        List<LetterVersionsDTO> result = versionService.getVersionsOfLetter("999");
 
         // Assert
         assertNotNull(result);

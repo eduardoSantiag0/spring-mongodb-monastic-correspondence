@@ -1,10 +1,12 @@
-package com.spring_mongodb_monastic_correspondence.domain.services;
+package com.spring_mongodb_monastic_correspondence.application.services;
 
-import com.spring_mongodb_monastic_correspondence.application.exceptions.InvalidStateExeption;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.LetterWithCommentsDTO;
+import com.spring_mongodb_monastic_correspondence.application.exceptions.InvalidStateException;
 import com.spring_mongodb_monastic_correspondence.application.exceptions.LetterNotFoundException;
-import com.spring_mongodb_monastic_correspondence.domain.dtos.CreateLetterDTO;
-import com.spring_mongodb_monastic_correspondence.domain.dtos.LettersDTO;
-import com.spring_mongodb_monastic_correspondence.domain.model.LettersEntity;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.CommentResponse;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.CreateLetterDTO;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.LettersDTO;
+import com.spring_mongodb_monastic_correspondence.infra.entities.LettersEntity;
 import com.spring_mongodb_monastic_correspondence.domain.model.State;
 import com.spring_mongodb_monastic_correspondence.infra.LettersMapper;
 import com.spring_mongodb_monastic_correspondence.infra.repositories.LettersRepository;
@@ -23,7 +25,10 @@ public class LettersService {
     private LettersRepository lettersRepository;
 
     @Autowired
-    private VersionServices versionServices;
+    private VersionService versionService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private LettersMapper mapper;
@@ -60,9 +65,7 @@ public class LettersService {
 
         lettersRepository.save(entity);
 
-//        log.info("ACTION=CREATE ID={} AUTHOR={}", entity.getId(), entity.getSender());
-        log.info("No ano {}, o irmão {} mandou uma carta para o irmão {}. A carta foi encontrada no estado {}",
-                entity.getApproximateYear(), entity.getSender(), entity.getReceiver(), entity.getCurrentState());
+        log.info("ACTION=CREATE ID={} AUTHOR={}", entity.getId(), entity.getSender());
 
         return mapper.toDTO(entity);
     }
@@ -100,7 +103,7 @@ public class LettersService {
 
         LettersEntity entity = optional.get();
 
-        versionServices.saveOldVersion(entity);
+        versionService.saveOldVersion(entity);
 
         entity.setContent(newContent);
         entity.incVersion();
@@ -113,7 +116,7 @@ public class LettersService {
     }
 
 
-    public LettersDTO getLetterById(String id) {
+    public LetterWithCommentsDTO getLetterById(String id) {
 
         Optional<LettersEntity> optional = lettersRepository.findById(id);
 
@@ -125,7 +128,14 @@ public class LettersService {
         LettersEntity entity = optional.get();
         log.info("ACTION=READ ID={}", id);
 
-        return mapper.toDTO(entity);
+//        LettersDTO dto = mapper.toDTO(entity);
+        List<CommentResponse>  comments = commentService.getAllComments(entity.getId());
+
+        return new LetterWithCommentsDTO(entity.getSender(), entity.getReceiver(),
+                entity.getContent(), entity.getApproximateYear(),
+                entity.getCurrentState(), entity.getVersion(),
+                comments);
+
     }
 
 
@@ -181,7 +191,7 @@ public class LettersService {
             throw new LetterNotFoundException(id);
 
         if (optional.get().getCurrentState() != State.DEPRECATED)
-            throw new InvalidStateExeption("Letter does not need fixing");
+            throw new InvalidStateException("Letter does not need fixing");
 
         LettersEntity entity = optional.get();
 

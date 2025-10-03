@@ -2,15 +2,15 @@ package com.spring_mongodb_monastic_correspondence.domain.model;
 
 import org.springframework.data.annotation.Id;
 
-abstract class Letter {
+public abstract class Letter {
     @Id
-    String id;
-    String sender;
-    String receiver;
-    String content;
-    int  approximateYear;
-    State currentState;
-    int version;
+    protected String id;
+    protected String sender;
+    protected String receiver;
+    protected String content;
+    protected int  approximateYear;
+    protected State currentState;
+    protected int version;
 
     public Letter(String id, String sender, String receiver, String content, int approximateYear, State currentState, int version) {
         this.id = id;

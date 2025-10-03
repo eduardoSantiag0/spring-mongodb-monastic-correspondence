@@ -1,7 +1,6 @@
-package com.spring_mongodb_monastic_correspondence.domain.dtos;
+package com.spring_mongodb_monastic_correspondence.infra.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.apache.el.stream.Optional;
 
 public record UpdateLetterDTO(
         @Schema(description = "New letter state (optional)", example = "IN_REVIEW", requiredMode = Schema.RequiredMode.NOT_REQUIRED)

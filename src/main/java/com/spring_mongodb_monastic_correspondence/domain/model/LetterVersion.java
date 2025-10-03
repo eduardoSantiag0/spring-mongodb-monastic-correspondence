@@ -1,5 +1,6 @@
 package com.spring_mongodb_monastic_correspondence.domain.model;
 
+import com.spring_mongodb_monastic_correspondence.infra.entities.LettersEntity;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 

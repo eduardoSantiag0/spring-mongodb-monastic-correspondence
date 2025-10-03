@@ -32,6 +32,7 @@ The ideia for the project came by my reading of _A Canticle for Leibowitz_
 - **Delete letters** with logging.
 - **Simulate deprecated content** and provide a mechanism to fix deprecated letters.
 - **Comprehensive logging** of actions like creation, reading, editing, deletion, and fixing.
+- **Add and list comments** on a letter, with a snapshot of the **last comment** kept on the letter document (for fast reads).
 
 ---
 
@@ -50,15 +51,22 @@ The ideia for the project came by my reading of _A Canticle for Leibowitz_
 - `LettersVersionsController`
     - GET `/versions/of/{originalId}` — List versions of the same letter
 
+- `CommentController` 
+  - `POST /monastic-correspondence/{id}/comment` — Add a new comment to the letter `{id}`
+  - `GET /monastic-correspondence/{id}/comment?page={page}&size={size}` — List comments of letter `{id}`
+
+
 ### Core Services
 
 - `LettersService` — Implements business logic for creating, updating, deleting, fixing letters, and filtering queries.
 - `VersionServices` — Manages saving old versions of letters for audit/history.
+- `CommentService` — Adds and queries comments; updates letter’s last comment.
 
 ### Data Model
 
 - `LettersEntity` — Represents the current letter in the "letters" MongoDB collection.
 - `LetterVersion` — Represents archived versions of letters in the "letter_versions" MongoDB collection.
+- `CommentDocument` — Stores comments in a dedicated collection; letters keep only the latest comment.
 
 ### Versioning & Deprecation Simulation
 
@@ -70,7 +78,7 @@ The ideia for the project came by my reading of _A Canticle for Leibowitz_
 
 
 ### 📝 Logging
-All significant actions like creation, update, deletion, reading, and fixing are logged using SLF4J + Logback with contextual details (letter IDs, version numbers, authors, states).
+All significant actions like creation, update, deletion, reading, fixing and commenting are logged using SLF4J + Logback with contextual details (letter IDs, version numbers, authors, states).
 
 
 ---

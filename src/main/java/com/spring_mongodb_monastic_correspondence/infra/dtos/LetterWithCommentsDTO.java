@@ -1,11 +1,11 @@
-package com.spring_mongodb_monastic_correspondence.domain.dtos;
+package com.spring_mongodb_monastic_correspondence.infra.dtos;
 
 import com.spring_mongodb_monastic_correspondence.domain.model.State;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 
-public record LettersDTO(
-        String id,
+import java.util.List;
+
+public record LetterWithCommentsDTO(
 
         @Schema(example = "Father James")
         String sender,
@@ -22,6 +22,10 @@ public record LettersDTO(
         @Schema(example = "READABLE")
         State currentState,
 
-        int version
+        int version,
+
+        List<CommentResponse> comments
+
 ) {
+
 }

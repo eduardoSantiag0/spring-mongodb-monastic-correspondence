@@ -1,8 +1,7 @@
 package com.spring_mongodb_monastic_correspondence.infra.repositories;
 
-import com.spring_mongodb_monastic_correspondence.domain.model.LettersEntity;
+import com.spring_mongodb_monastic_correspondence.infra.entities.LettersEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 

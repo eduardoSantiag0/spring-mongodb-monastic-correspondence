@@ -1,7 +1,7 @@
 package com.spring_mongodb_monastic_correspondence.infra;
 
-import com.spring_mongodb_monastic_correspondence.domain.model.LettersEntity;
-import com.spring_mongodb_monastic_correspondence.domain.dtos.LettersDTO;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.LettersDTO;
+import com.spring_mongodb_monastic_correspondence.infra.entities.LettersEntity;
 import org.springframework.stereotype.Component;
 
 @Component

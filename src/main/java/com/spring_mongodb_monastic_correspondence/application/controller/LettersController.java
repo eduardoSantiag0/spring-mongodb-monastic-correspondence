@@ -1,10 +1,11 @@
-package com.spring_mongodb_monastic_correspondence.application;
+package com.spring_mongodb_monastic_correspondence.application.controller;
 
-import com.spring_mongodb_monastic_correspondence.domain.dtos.CreateLetterDTO;
-import com.spring_mongodb_monastic_correspondence.domain.dtos.UpdateLetterDTO;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.LetterWithCommentsDTO;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.CreateLetterDTO;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.UpdateLetterDTO;
 import com.spring_mongodb_monastic_correspondence.domain.model.State;
-import com.spring_mongodb_monastic_correspondence.domain.services.LettersService;
-import com.spring_mongodb_monastic_correspondence.domain.dtos.LettersDTO;
+import com.spring_mongodb_monastic_correspondence.application.services.LettersService;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.LettersDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,7 +14,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,7 +62,7 @@ public class LettersController {
             @ApiResponse(responseCode = "200", description = "Letter found"),
             @ApiResponse(responseCode = "404", description = "Letter not found")
     })
-    public ResponseEntity<LettersDTO> getLetterById(@PathVariable String id) {
+    public ResponseEntity<LetterWithCommentsDTO> getLetterById(@PathVariable String id) {
         return ResponseEntity.ok(lettersService.getLetterById(id));
     }
 

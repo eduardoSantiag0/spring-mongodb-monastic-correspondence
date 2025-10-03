@@ -1,4 +1,4 @@
-package com.spring_mongodb_monastic_correspondence.domain.dtos;
+package com.spring_mongodb_monastic_correspondence.infra.dtos;
 
 import com.spring_mongodb_monastic_correspondence.domain.model.State;
 import jakarta.validation.constraints.NotBlank;

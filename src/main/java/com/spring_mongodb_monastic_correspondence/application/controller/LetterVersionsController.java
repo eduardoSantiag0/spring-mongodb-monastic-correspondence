@@ -1,9 +1,8 @@
-package com.spring_mongodb_monastic_correspondence.application;
+package com.spring_mongodb_monastic_correspondence.application.controller;
 
 
-import com.spring_mongodb_monastic_correspondence.domain.dtos.LetterVersionsDTO;
-import com.spring_mongodb_monastic_correspondence.domain.model.LetterVersion;
-import com.spring_mongodb_monastic_correspondence.domain.services.VersionServices;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.LetterVersionsDTO;
+import com.spring_mongodb_monastic_correspondence.application.services.VersionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/versions")
-public class LettersVersionsController {
+public class LetterVersionsController {
 
     @Autowired
-    private VersionServices versionService;
+    private VersionService versionService;
 
 
      @GetMapping("/of/{originalId}")

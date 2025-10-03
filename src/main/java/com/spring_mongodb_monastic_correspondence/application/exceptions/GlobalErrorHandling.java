@@ -14,8 +14,8 @@ public class GlobalErrorHandling {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
-    @ExceptionHandler(InvalidStateExeption.class)
-    public ResponseEntity<String> handleInvalidStateExeption(InvalidStateExeption ex) {
+    @ExceptionHandler(InvalidStateException.class)
+    public ResponseEntity<String> handleInvalidStateExeption(InvalidStateException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 

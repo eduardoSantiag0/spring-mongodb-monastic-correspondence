@@ -1,8 +1,8 @@
-package com.spring_mongodb_monastic_correspondence.domain.services;
+package com.spring_mongodb_monastic_correspondence.application.services;
 
-import com.spring_mongodb_monastic_correspondence.domain.dtos.LetterVersionsDTO;
+import com.spring_mongodb_monastic_correspondence.infra.dtos.LetterVersionsDTO;
 import com.spring_mongodb_monastic_correspondence.domain.model.LetterVersion;
-import com.spring_mongodb_monastic_correspondence.domain.model.LettersEntity;
+import com.spring_mongodb_monastic_correspondence.infra.entities.LettersEntity;
 import com.spring_mongodb_monastic_correspondence.infra.repositories.LetterVersionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class VersionServices {
+public class VersionService {
 
     @Autowired
     private LetterVersionsRepository versionsRepository;
